@@ -138,6 +138,13 @@
             </intent-filter>
         </receiver>
         {% endif %}
+
+        {% for name in service_names %}
+        <receiver android:name="{{ args.package }}.BroadcastReceiver{{ name|capitalize }}" android:enabled="true" >
+            <intent-filter><action android:name="android.intent.action.BOOT_COMPLETED" /></intent-filter>
+        </receiver>
+        {% endfor %}
+
     {% for a in args.add_activity  %}
     <activity android:name="{{ a }}"></activity>
     {% endfor %}

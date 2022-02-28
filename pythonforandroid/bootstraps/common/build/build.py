@@ -459,9 +459,11 @@ main.py that loads it.''')
         name = spec[0]
         entrypoint = spec[1]
         options = spec[2:]
+        service_id = sid + 1
 
         foreground = 'foreground' in options
         sticky = 'sticky' in options
+        bootstart = 'bootstart' in options
 
         service_names.append(name)
         service_target_path =\
@@ -477,9 +479,29 @@ main.py that loads it.''')
             args=args,
             foreground=foreground,
             sticky=sticky,
-            service_id=sid + 1,
+            service_id=service_id,
             base_service_class=base_service_class,
+            bootstart=bootstart,
         )
+
+        if bootstart:
+            broadcast_receiver_target_path = \
+                'src/main/java/{}/BroadcastReceiver{}.java'.format(
+                    args.package.replace(".", "/"),
+                    name.capitalize()
+                )
+            render(
+                'BroadcastReceiver.tmpl.java',
+                broadcast_receiver_target_path,
+                name=name,
+                entrypoint=entrypoint,
+                args=args,
+                foreground=foreground,
+                sticky=sticky,
+                service_id=service_id,
+                base_service_class=base_service_class,
+                bootstart=bootstart,
+            )
 
     # Find the SDK directory and target API
     with open('project.properties', 'r') as fileh:
